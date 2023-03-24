@@ -8,7 +8,6 @@ def home(request):
 
 def order(request):
     multiple_form = MultiplePizzaForm()
-
     if request.method == 'POST':
         # FILES permite por ejemplo agregar un "adjuntar imagen"
         # filled_form = PizzaForm(request.POST, request.FILES)
@@ -18,8 +17,13 @@ def order(request):
             created_pizza_pk = created_pizza.id
             filled_form.save() # Persistir el pedido
             note = f'Thanks for ordering! Your {filled_form.cleaned_data["size"]} pizza with {filled_form.cleaned_data["topping_1"]} {filled_form.cleaned_data["topping_2"]} is on its way'
-            new_form = PizzaForm()
-            return render(request, 'pizza/order.html', {'created_pizza_pk':created_pizza_pk, 'pizzaform':new_form, 'note':note, 'multiple_form':multiple_form})
+            filled_form = PizzaForm() # Recibe el PizzaForm erroneo en caso de error
+        # Added server-side validation
+        else:
+            created_pizza_pk = None
+            note = 'Pizza order has failed. Try again!'
+        return render(request, 'pizza/order.html', {'created_pizza_pk':created_pizza_pk, 'pizzaform':filled_form, 'note':note, 'multiple_form':multiple_form})
+        # return render(request, 'pizza/order.html', {'created_pizza_pk':created_pizza_pk, 'pizzaform':new_form, 'note':note, 'multiple_form':multiple_form})
     else:
         form = PizzaForm()
         return render(request, 'pizza/order.html', {'pizzaform':form, 'multiple_form':multiple_form})

@@ -1,19 +1,39 @@
-<h1>Order a pizza</h1>
+{% extends 'pizza/base.html' %}
+{% block 'body' %}
 
-<h2>{{ note }}</h2>
-{% if created_pizza_pk %}
-<a href="{% url 'edit_order' created_pizza_pk %}">Edit your order</a>
-{% endif %}
-<!-- enctype="multipart/form-data" es para agregar files, por ejemplo imagenes -->
-<form action="{% url 'order' %}" method="post"> {% csrf_token %} 
-    {{ pizzaform }}
-    <input type="submit" value="Make your order">
-</form>
+    {% load widget_tweaks %}
+        
+    <div class="container">
+        <h1>Order a pizza</h1>
 
-<br><br>
+        <h2>{{ note }}</h2>
+        {% if created_pizza_pk %}
+        <a href="{% url 'edit_order' created_pizza_pk %}">Edit your order</a>
+        {% endif %}
 
-Want more than one pizza?
-<form action="{% url 'pizzas' %}" method="get">
-    {{ multiple_form }}
-    <input type="submit" value="Get Pizzas">
-</form>
+        <form action="{% url 'order' %}" method="post" novalidate> {% csrf_token %}
+            {% for field in pizzaform %}
+            <div class="form-group">
+            {{ field.errors }}
+            {{ field.label_tag }}
+            {% render_field field class="form-control" %}
+            </div>
+            {% endfor %}
+            <!-- {{ pizzaform }} -->
+            <input type="submit" value="Make your order">
+        </form>
+        
+        <br><br>
+        
+        Want more than one pizza?
+        <form action="{% url 'pizzas' %}" method="get">
+            {{ multiple_form }}
+            <input type="submit" value="Get Pizzas">
+        </form>    
+    
+    </div>
+
+{% endblock %}
+
+
+
